@@ -371,14 +371,14 @@ public:
 		list.SetCurSel(0);
 	}
 
-	void OnEdit(const wchar_t *search)
+	void OnEdit(const std::wstring &search)
 	{
 		if (search[0] == '!')
 		{
 			current_type = COMMAND_BUILTIN;
 			
 			ShowEdit(builtin_command_list, [search, this](const builtin_command &run) {
-				if (double rank = ranker(search + 1, run.name))
+				if (double rank = ranker(search.c_str() + 1, run.name))
 				{
 					rank_list_command.push_back({ run.name, run.command, rank });
 				}
@@ -422,7 +422,7 @@ public:
 		CString search;
 		edit.GetWindowText(search);
 		std::wstring lower_search = search;
-		boost::algorithm::to_lower(lower_search)
+		boost::algorithm::to_lower(lower_search);
 		OnEdit(remove_spaces(lower_search));
 	}
 
