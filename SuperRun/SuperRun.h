@@ -42,7 +42,16 @@
 #define WM_USER_KEYUP (WM_USER + 3)
 #define WM_USER_ADDDIR (WM_USER + 4)
 
-
 #define KEY_PRESSED 0x8000
+
+HINSTANCE instance;
+HWND hwnd;
+HHOOK keyboard_hook;
+
+const wchar_t unique_guid[] = L"{CB41203E-18C5-4FE7-95C3-BD79998DD0FE}";
+const wchar_t index_config[] = L"Index.json";
+const wchar_t settings_config[] = L"Settings.json";
+
+const wchar_t app_name[] = L"SuperRun";
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")

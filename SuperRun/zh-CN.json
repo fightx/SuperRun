@@ -3,5 +3,13 @@
 	"title":"输入命令：",
 	"platform_error":"您正在使用64位操作系统，应该使用64位的本软件。",
 	"tray_title":"欢迎使用SuperRun",
-	"tray_info":"按下Win+R即可显示搜索界面\n再次按下即可隐藏。"
+	"tray_info":"按下Win+R即可显示搜索界面\n再次按下即可隐藏。",
+	"about_info":"欢迎使用SuperRun，目前正在开发中。",
+
+	"about":"关于",
+	"exit":"退出",
+	"append":"添加目录",
+	"autorun_enable":"开机启动",
+	"autorun_disable":"取消开机启动",
+	"autorun_tip":"您正在临时文件夹中运行本软件，不建议启用开机自动启动。\n您如果依然想要开机启动，请选择 是。"
 }

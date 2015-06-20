@@ -1,10 +1,8 @@
 ﻿#pragma once
 
-#include <muiload.h>
-#pragma comment(lib, "muiload.lib")
+#include <shlwapi.h>
 
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <map>
 
 typedef std::map<std::wstring, std::wstring> special_name_map;
@@ -237,4 +235,12 @@ boost::filesystem::path GetAppPath()
 	::GetModuleFileName(NULL, app_path, MAX_PATH);
 
 	return boost::filesystem::wpath(app_path).parent_path();
+}
+
+void GetPrettyPath(TCHAR *path)
+{
+	TCHAR temp[MAX_PATH];
+	GetModuleFileName(NULL, temp, MAX_PATH);
+	PathCanonicalize(path, temp);
+	PathQuoteSpaces(path);
 }

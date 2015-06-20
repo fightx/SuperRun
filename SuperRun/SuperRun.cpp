@@ -7,14 +7,6 @@
 #include "scanner.h"
 #include "builtin.h"
 
-HINSTANCE instance;
-HWND hwnd;
-HHOOK keyboard_hook;
-
-const wchar_t unique_guid[] = L"{CB41203E-18C5-4FE7-95C3-BD79998DD0FE}";
-const wchar_t index_config[] = L"Index.json";
-const wchar_t settings_config[] = L"Settings.json";
-
 boost::property_tree::wptree settings;
 
 enum COMMAND_TYPE
@@ -69,7 +61,7 @@ class SuperRunUI :
 	public ATL::CWindowImpl<SuperRunUI>
 {
 public:
-	DECLARE_WND_CLASS(L"SuperRun")
+	DECLARE_WND_CLASS(app_name)
 
 	BEGIN_MSG_MAP(SuperRunUI)
 		MSG_WM_CREATE(OnCreate)
@@ -369,7 +361,7 @@ public:
 		{
 			current_type = COMMAND_BUILTIN;
 			
-			ShowEdit(builtin_command_list, [search, this](const builtin_command &run) {
+			ShowEdit(get_builtin_command_list(hwnd), [search, this](const builtin_command_name &run) {
 				if (double rank = ranker(search.c_str() + 1, run.name))
 				{
 					rank_list_command.push_back({ run.name, run.command, rank });
@@ -420,9 +412,20 @@ public:
 		OnEdit(remove_spaces(lower_search));
 	}
 
+	void RunListCommand(bool have_choice, std::wstring command)
+	{
+		switch (current_type)
+		{
+		case COMMAND_GENERAL:
+			RunGeneral(have_choice, command.c_str());
+			break;
+		case COMMAND_BUILTIN:
+			RunBuiltin(have_choice, command.c_str());
+			break;
+		}
+	}
 	void RunList(bool have_choice)
 	{
-
 		std::wstring command;
 
 		if (have_choice)
@@ -442,15 +445,8 @@ public:
 		
 		HideWindow();
 
-		switch (current_type)
-		{
-		case COMMAND_GENERAL:
-			RunGeneral(have_choice, command.c_str());
-			break;
-		case COMMAND_BUILTIN:
-			RunBuiltin(have_choice, command.c_str());
-			break;
-		}
+		RunListCommand(have_choice, command);
+		//group.add_thread(new boost::thread(&SuperRunUI::RunListCommand, this, have_choice, command));
 	}
 
 	void RunGeneral(bool have_choice, const wchar_t * command)
@@ -554,8 +550,6 @@ public:
 		is_show = true;
 		edit.SetFocus();
 		UpdateList();
-
-		current_type = COMMAND_GENERAL;
 	}
 protected:
 	CEdit edit;
@@ -589,7 +583,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	IsWow64Process(GetCurrentProcess(), &bIsWow64);
 	if (bIsWow64)
 	{
-		return MessageBox(0, i18n::GetString(L"platform_error").c_str(), i18n::GetString(L"name").c_str(), MB_ICONWARNING);
+		return TipsBox(i18n::GetString(L"platform_error").c_str(), MB_ICONWARNING);
 	}
 
 	// 检查单例，并且唤出界面

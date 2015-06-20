@@ -53,3 +53,8 @@ namespace i18n
 		return language.get<std::wstring>(name, name);
 	}
 }
+
+int TipsBox(const wchar_t *tips, UINT type = MB_OK)
+{
+	return MessageBoxW(NULL, tips, i18n::GetString(L"name").c_str(), type);
+}
