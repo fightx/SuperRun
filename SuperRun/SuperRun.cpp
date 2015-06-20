@@ -13,6 +13,7 @@ enum COMMAND_TYPE
 {
 	COMMAND_GENERAL,
 	COMMAND_BUILTIN,
+	COMMAND_CRYPTO,
 };
 
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -451,6 +452,18 @@ public:
 
 	void RunGeneral(bool have_choice, const wchar_t * command)
 	{
+		//判断是否是注册表
+		if (!have_choice && boost::istarts_with(command, L"HKEY_"))
+		{
+			HKEY hKey;
+			if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit"), 0, KEY_ALL_ACCESS, &hKey) == ERROR_SUCCESS)
+			{
+				RegSetValueEx(hKey, L"LastKey", 0, REG_SZ, (LPBYTE)command, _tcslen(command)*sizeof(TCHAR));
+				RegCloseKey(hKey);
+			}
+			command = L"regedit";
+		}
+
 		SHELLEXECUTEINFO ShExecInfo = { 0 };
 		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 		ShExecInfo.lpFile = command;

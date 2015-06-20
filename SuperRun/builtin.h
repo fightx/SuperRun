@@ -50,7 +50,7 @@ bool is_autorun(HWND hwnd)
 			wchar_t path[MAX_PATH];
 			GetPrettyPath(path);
 
-			if (wcsicmp(path, buffer) == 0)
+			if (_tcsicmp(path, buffer) == 0)
 			{
 				return true;
 			}
