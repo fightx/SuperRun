@@ -206,14 +206,7 @@ public:
 			break;
 
 		case VK_RETURN:
-			if (list.GetCurSel() != LB_ERR)
-			{
-				RunList();
-			}
-			else
-			{
-				HideWindow();
-			}
+			RunList(list.GetCurSel() != LB_ERR);
 			break;
 		}
 		return 1;
@@ -405,6 +398,7 @@ public:
 		{
 			if (uNotifyCode == EN_CHANGE && is_show)
 			{
+				//文本框有改变
 				UpdateList();
 			}
 		}
@@ -412,7 +406,8 @@ public:
 		{
 			if (uNotifyCode == LBN_SELCHANGE && is_show)
 			{
-				RunList();
+				//鼠标点击了一项列表
+				RunList(true);
 			}
 		}
 	}
@@ -426,27 +421,40 @@ public:
 		OnEdit(remove_spaces(lower_search));
 	}
 
-	void RunList()
+	void RunList(bool have_choice)
 	{
-		int index = list.GetCurSel();
-		const void * data = list.GetItemDataPtr(index);
 
-		std::wstring command = std::wstring((const wchar_t *)data);
+		std::wstring command;
 
+		if (have_choice)
+		{
+			//列表中有选择
+			int index = list.GetCurSel();
+			const void * data = list.GetItemDataPtr(index);
+			command = std::wstring((const wchar_t *)data);
+		}
+		else
+		{
+			//列表为空
+			CString text;
+			edit.GetWindowText(text);
+			command = text;
+		}
+		
 		HideWindow();
 
 		switch (current_type)
 		{
 		case COMMAND_GENERAL:
-			RunGeneral(command.c_str());
+			RunGeneral(have_choice, command.c_str());
 			break;
 		case COMMAND_BUILTIN:
-			RunBuiltin(command.c_str());
+			RunBuiltin(have_choice, command.c_str());
 			break;
 		}
 	}
 
-	void RunGeneral(const wchar_t * command)
+	void RunGeneral(bool have_choice, const wchar_t * command)
 	{
 		SHELLEXECUTEINFO ShExecInfo = { 0 };
 		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
@@ -455,12 +463,16 @@ public:
 
 		if (ShellExecuteEx(&ShExecInfo))
 		{
-			run_list.AddCount(command);
+			if (have_choice)
+			{
+				run_list.AddCount(command);
+			}
 		}
 	}
 
-	void RunBuiltin(const wchar_t * command)
+	void RunBuiltin(bool have_choice, const wchar_t * command)
 	{
+		if (!have_choice) return;
 		for (auto &builtin_command : builtin_command_list)
 		{
 			if (builtin_command.command == command)
