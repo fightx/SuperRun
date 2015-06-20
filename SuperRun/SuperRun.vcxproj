@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="builtin.h" />
     <ClInclude Include="element.h" />
+    <ClInclude Include="i18n.h" />
     <ClInclude Include="pinyin.h" />
     <ClInclude Include="ranker.h" />
     <ClInclude Include="scanner.h" />

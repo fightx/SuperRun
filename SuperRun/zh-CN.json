@@ -1,0 +1,7 @@
+{
+	"name":"SuperRun",
+	"title":"输入命令：",
+	"platform_error":"您正在使用64位操作系统，应该使用64位的本软件。",
+	"tray_title":"欢迎使用SuperRun",
+	"tray_info":"按下Win+R即可显示搜索界面\n再次按下即可隐藏。"
+}

@@ -41,5 +41,5 @@ void append(HWND hwnd)
 builtin_command builtin_command_list[] = {
 	{ L"关于", L"about", &about },
 	{ L"退出", L"exit", &exit },
-	{ L"添加目录", L"ppend", &append },
+	{ L"添加目录", L"append", &append },
 };

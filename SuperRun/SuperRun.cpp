@@ -1,21 +1,17 @@
 ﻿#include "SuperRun.h"
 
+#include "i18n.h"
 #include "match.h"
 #include "pinyin.h"
 #include "watcher.h"
 #include "scanner.h"
 #include "builtin.h"
 
-
 HINSTANCE instance;
-
 HWND hwnd;
-
 HHOOK keyboard_hook;
 
 const wchar_t unique_guid[] = L"{CB41203E-18C5-4FE7-95C3-BD79998DD0FE}";
-
-const wchar_t szTitle[] = L"输入命令：";
 const wchar_t index_config[] = L"Index.json";
 const wchar_t settings_config[] = L"Settings.json";
 
@@ -292,11 +288,14 @@ public:
 	{
 		memset(&nid, 0, sizeof(nid));
 		nid.cbSize = sizeof(NOTIFYICONDATA);
+		nid.uID = 100;
 		nid.hWnd = hwnd;
 		nid.dwInfoFlags = NIIF_INFO;
-		nid.uFlags = NIF_INFO;
-		wcscpy_s(nid.szInfoTitle, _countof(nid.szInfoTitle), L"SuperRun");
-		wcscpy_s(nid.szInfo, _countof(nid.szInfo), L"按下Win+R即可显示搜索界面\n再次按下即可隐藏");
+		nid.uFlags = NIF_ICON | NIF_TIP | NIF_INFO;
+		nid.hIcon = LoadIcon(instance, L"APPICON");
+		wcscpy_s(nid.szInfoTitle, _countof(nid.szInfoTitle), i18n::GetString(L"tray_title").c_str());
+		wcscpy_s(nid.szInfo, _countof(nid.szInfo), i18n::GetString(L"tray_info").c_str());
+		wcscpy_s(nid.szTip, _countof(nid.szTip), i18n::GetString(L"name").c_str());
 		Shell_NotifyIcon(NIM_ADD, &nid);
 		Shell_NotifyIcon(NIM_DELETE, &nid);
 	}
@@ -583,12 +582,14 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPTSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+	i18n::Init();
+
 	//检查操作系统
 	BOOL bIsWow64 = FALSE;
 	IsWow64Process(GetCurrentProcess(), &bIsWow64);
 	if (bIsWow64)
 	{
-		return MessageBox(0, L"您正在使用64位操作系统，应该使用64位的本软件。", L"SuperRun", MB_ICONWARNING);
+		return MessageBox(0, i18n::GetString(L"platform_error").c_str(), i18n::GetString(L"name").c_str(), MB_ICONWARNING);
 	}
 
 	// 检查单例，并且唤出界面
@@ -604,13 +605,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	InitCommonControls();
 
-	std::wstring xx = GetDefaultLanguage();
-	LoadFromFile(settings, settings_config);
+	LoadFromFile(settings, GetDataPath(settings_config).c_str());
 
 	instance = hInstance;
 
 	SuperRunUI UI;
-	if (!UI.Create(NULL, CRect(0, 0, 400, 400), szTitle, WS_CAPTION, WS_EX_COMPOSITED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST))
+	if (!UI.Create(NULL, CRect(0, 0, 400, 400), i18n::GetString(L"title").c_str(), WS_CAPTION, WS_EX_COMPOSITED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST))
 	{
 		return 0;
 	}
@@ -619,6 +619,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	WTL::CMessageLoop msgLoop;
 	int ret = msgLoop.Run();
 
-	SaveToFile(settings, settings_config);
+	SaveToFile(settings, GetDataPath(settings_config).c_str());
 	return ret;
 }

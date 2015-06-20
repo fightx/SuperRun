@@ -1,9 +1,14 @@
 #pragma once
 
+#include <codecvt>
+#include <locale>
+
 #include <boost/filesystem.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+
+#include "util.h"
 
 boost::filesystem::path GetDataPath(const wchar_t *path)
 {
@@ -19,24 +24,37 @@ boost::filesystem::path GetDataPath(const wchar_t *path)
 	return data_path / path;
 }
 
-void LoadFromFile(boost::property_tree::wptree &config, const wchar_t *path)
+boost::filesystem::path GetLangPath(const wchar_t *path)
+{
+	return GetAppPath() / L"Lang" / path;
+}
+
+bool LoadFromFile(boost::property_tree::wptree &config, const wchar_t *path)
 {
 	try{
-		std::wifstream file(GetDataPath(path).c_str(), std::ios_base::binary);
+		std::wifstream file(path, std::ios_base::binary);
+
+		file.imbue(std::locale(std::locale(), new std::codecvt_utf8_utf16<wchar_t>));
 
 		boost::property_tree::json_parser::read_json(file, config);
 
 		file.close();
+		return true;
 	}
 	catch (...)
 	{
-		boost::filesystem::remove(GetDataPath(path).c_str());
+		boost::filesystem::remove(path);
 	}
+
+	return false;
 }
 
 void SaveToFile(const boost::property_tree::wptree &config, const wchar_t *path)
 {
-	std::wofstream file(GetDataPath(path).c_str(), std::ios_base::binary);
+	std::wofstream file(path, std::ios_base::binary);
+
+	file.imbue(std::locale(std::locale(), new std::codecvt_utf8_utf16<wchar_t>));
+
 	boost::property_tree::json_parser::write_json(file, config);
 	file.close();
 }

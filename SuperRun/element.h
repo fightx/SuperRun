@@ -228,7 +228,7 @@ public:
 		try{
 			boost::property_tree::wptree config;
 
-			LoadFromFile(config, path);
+			LoadFromFile(config, GetDataPath(path).c_str());
 
 			boost::system::error_code ec;
 			for (auto list : config.get_child(L"list"))
@@ -298,7 +298,7 @@ public:
 
 		boost::property_tree::wptree props;
 		props.add_child(L"list", config);
-		SaveToFile(props, path);
+		SaveToFile(props, GetDataPath(path).c_str());
 	}
 private:
 	void add(super_run run)
