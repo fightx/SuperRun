@@ -469,6 +469,21 @@ public:
 		ShExecInfo.lpFile = command;
 		ShExecInfo.nShow = SW_SHOW;
 
+		std::wstring argv = command;
+		std::wstring lpFile;
+		std::wstring lpParameters;
+		if (!have_choice)
+		{
+			std::size_t space = argv.find(L" ");
+			if (space != std::wstring::npos)
+			{
+				lpFile = argv.substr(0, space);
+				lpParameters = argv.substr(space + 1);
+				ShExecInfo.lpFile = lpFile.c_str();
+				ShExecInfo.lpParameters = lpParameters.c_str();
+			}
+		}
+
 		if (ShellExecuteEx(&ShExecInfo))
 		{
 			if (have_choice)
@@ -476,6 +491,7 @@ public:
 				run_list.AddCount(command);
 			}
 		}
+
 	}
 
 	void RunBuiltin(bool have_choice, const wchar_t * command)
