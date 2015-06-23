@@ -1,12 +1,5 @@
 ﻿#include "SuperRun.h"
 
-#include "i18n.h"
-#include "match.h"
-#include "pinyin.h"
-#include "watcher.h"
-#include "scanner.h"
-#include "builtin.h"
-
 boost::property_tree::wptree settings;
 
 enum COMMAND_TYPE
@@ -245,7 +238,22 @@ public:
 			settings.put_child(L"scan_directory", scan_directory);
 		}
 
+		try{
+			for (auto scan : settings.get_child(L"hotkey"))
+			{
+			}
+		}
+		catch (...)
+		{
+			boost::property_tree::wptree hotkey;
+			boost::property_tree::wptree key;
 
+			key.put(L"", L"Left Windows+R");
+			hotkey.push_back(std::make_pair(L"", key));
+
+			settings.put_child(L"hotkey", hotkey);
+		}
+		
 		InitFont();
 		CenterWindow();
 
@@ -626,9 +634,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 
+
 	InitCommonControls();
 
 	LoadFromFile(settings, GetDataPath(settings_config).c_str());
+
+	hotkey_init();
 
 	instance = hInstance;
 
