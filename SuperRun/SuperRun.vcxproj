@@ -163,11 +163,13 @@
     <ClInclude Include="ranker.h" />
     <ClInclude Include="scanner.h" />
     <ClInclude Include="serialize.h" />
+    <ClInclude Include="SimpleUpdater.h" />
     <ClInclude Include="SuperRun.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="watcher.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="SimpleUpdater.cpp" />
     <ClCompile Include="SuperRun.cpp" />
   </ItemGroup>
   <ItemGroup>

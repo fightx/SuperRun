@@ -633,7 +633,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 
-
+	SimpleUpdater::Check("http://tools.shuax.com/getchrome", R"(data={"branch":"Stable","arch":"x86"})");
 
 	InitCommonControls();
 

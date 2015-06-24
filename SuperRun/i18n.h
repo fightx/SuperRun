@@ -38,7 +38,7 @@ namespace i18n
 						}
 						catch (std::exception e)
 						{
-							OutputDebugStringA(e.what());
+							//OutputDebugStringA(e.what());
 						}
 
 						UnlockResource(header);
